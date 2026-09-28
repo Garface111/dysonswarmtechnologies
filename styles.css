@@ -46,9 +46,16 @@ h1, h2, h3 { font-family: "Manrope", sans-serif; font-weight: 700; letter-spacin
 }
 .site-header.scrolled {
   padding-top: .85rem; padding-bottom: .85rem;
-  background: rgba(7,7,10,0.78); backdrop-filter: blur(14px) saturate(140%);
   border-bottom: 1px solid var(--hairline);
 }
+/* Blur lives on a pseudo-element: backdrop-filter on the header itself would
+   become the containing block for the fixed mobile nav and leak it on screen. */
+.site-header::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0;
+  background: rgba(7,7,10,0.78); backdrop-filter: blur(14px) saturate(140%);
+  transition: opacity .4s var(--ease);
+}
+.site-header.scrolled::before { opacity: 1; }
 .brand { display: flex; align-items: center; gap: .7rem; }
 .brand-mark { width: 34px; height: 34px; object-fit: contain; }
 .brand-word {
@@ -227,6 +234,116 @@ h1, h2, h3 { font-family: "Manrope", sans-serif; font-weight: 700; letter-spacin
 .footer-mark { width: 30px; opacity: .8; }
 .site-footer p { color: var(--muted-2); font-size: .82rem; margin: 0; }
 
+/* ---------- DISCUSSION TEASER (home) ---------- */
+.nav a[aria-current="page"] { color: var(--gold-bright); }
+.discussion-teaser {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.6rem;
+  max-width: 760px; margin: 3rem auto 0; padding: 1.6rem 1.8rem; text-align: left;
+  border: 1px solid var(--hairline); border-radius: 4px;
+  background: linear-gradient(160deg, var(--panel), var(--obsidian-2));
+  transition: border-color .4s var(--ease), transform .4s var(--ease);
+}
+.discussion-teaser:hover { border-color: var(--gold); transform: translateY(-3px); }
+.teaser-rings { width: 64px; height: 64px; }
+.teaser-rings circle { fill: none; stroke: var(--gold); stroke-width: 1; opacity: .55; }
+.teaser-rings .teaser-core { fill: var(--gold-bright); stroke: none; opacity: 1; }
+.teaser-copy .eyebrow { margin-bottom: .45rem; font-size: .66rem; }
+.teaser-title { font-family: "Manrope", sans-serif; font-weight: 700; font-size: 1.25rem; color: var(--ink); display: block; line-height: 1.25; }
+.teaser-dek { color: var(--muted); font-size: .95rem; display: block; margin-top: .3rem; }
+.discussion-teaser .link-arrow { white-space: nowrap; }
+
+/* ---------- DISCUSSION ESSAY ---------- */
+.essay { padding: clamp(7rem, 14vw, 10rem) clamp(1.2rem, 5vw, 2rem) 0; }
+.essay-head { max-width: 760px; margin: 0 auto; text-align: center; }
+.essay-title { font-size: clamp(2.4rem, 7vw, 4.6rem); letter-spacing: -0.035em; text-wrap: balance; }
+.essay-dek {
+  font-family: "Manrope", sans-serif; font-weight: 500; color: var(--muted);
+  font-size: clamp(1.08rem, 2.2vw, 1.35rem); line-height: 1.5; margin: 1.4rem auto 0; max-width: 40ch;
+}
+.essay-byline { margin: 2rem 0 0; color: var(--muted); font-size: .92rem; display: flex; flex-direction: column; gap: .35rem; align-items: center; }
+.essay-byline strong { color: var(--ink); font-weight: 600; }
+.essay-byline .byline-meta { font-family: "Manrope", sans-serif; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted-2); }
+
+.essay-orrery { margin: clamp(2.5rem, 6vw, 4rem) auto clamp(2.5rem, 6vw, 4rem); max-width: 560px; }
+.essay-orrery svg { width: 100%; height: auto; display: block; overflow: visible; }
+.essay-orrery figcaption { color: var(--muted-2); font-size: .88rem; text-align: center; max-width: 52ch; margin: 1.2rem auto 0; line-height: 1.55; }
+.orrery-glow { animation: orreryBreathe 8s ease-in-out infinite; transform-origin: 250px 250px; }
+@keyframes orreryBreathe { 0%,100%{opacity:.85} 50%{opacity:1} }
+.orrery-point { filter: drop-shadow(0 0 6px #fffaf0); }
+.ring { fill: none; stroke: var(--gold-bright); stroke-width: 2.2; stroke-linecap: round; transform-origin: 250px 250px; animation: orbit linear infinite; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+/* Inner rings brightest and fastest (Dante; also Kepler: period ∝ r^1.5) */
+.r1 { stroke-dasharray: 0.1 10.6; opacity: .95; animation-duration: 14s; }
+.r2 { stroke-dasharray: 0.1 11.0; opacity: .86; animation-duration: 30s; }
+.r3 { stroke-dasharray: 0.1 11.4; opacity: .78; animation-duration: 49s; }
+.r4 { stroke-dasharray: 0.1 11.8; opacity: .70; animation-duration: 72s; }
+.r5 { stroke-dasharray: 0.1 12.2; opacity: .62; animation-duration: 97s; }
+.r6 { stroke-dasharray: 0.1 12.6; opacity: .54; animation-duration: 125s; }
+.r7 { stroke-dasharray: 0.1 13.0; opacity: .46; animation-duration: 155s; }
+.r8 { stroke-dasharray: 0.1 13.4; opacity: .38; animation-duration: 187s; }
+.r9 { stroke-dasharray: 0.1 13.8; opacity: .30; animation-duration: 221s; }
+@media (prefers-reduced-motion: reduce) { .ring, .orrery-glow { animation: none; } }
+
+.essay-body { max-width: 680px; margin: 0 auto; font-size: 1.1rem; line-height: 1.78; }
+.essay-body p { margin: 0 0 1.35rem; color: #cfcac0; }
+.essay-body strong { color: var(--ink); font-weight: 600; }
+.essay-body em { color: var(--ink); }
+.essay-lede { font-size: 1.24rem; line-height: 1.7; color: var(--ink) !important; }
+.essay-body h2 {
+  font-size: clamp(1.5rem, 3.4vw, 2.05rem); margin: 3.6rem 0 1.3rem;
+  display: flex; align-items: baseline; gap: .9rem;
+}
+.essay-num {
+  font-family: "Manrope", sans-serif; font-size: .78rem; font-weight: 600; letter-spacing: .24em;
+  color: var(--gold); flex: none; transform: translateY(-.2em);
+}
+.essay-body sup { font-size: .68em; line-height: 0; }
+.essay-body sup sup { font-size: .8em; }
+.essay-points { list-style: none; padding: 0; margin: 0 0 1.6rem; }
+.essay-points li {
+  position: relative; padding: 0 0 0 1.5rem; margin: 0 0 1.25rem; color: #cfcac0;
+}
+.essay-points li::before {
+  content: ""; position: absolute; left: 0; top: .72em; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold); box-shadow: 0 0 10px rgba(230,200,121,.6);
+}
+.essay-quote {
+  margin: 2.4rem 0; padding: .4rem 0 .4rem 1.8rem; border-left: 2px solid var(--gold);
+}
+.essay-quote p {
+  font-family: "Manrope", sans-serif; font-weight: 500; font-size: clamp(1.2rem, 2.6vw, 1.45rem);
+  line-height: 1.5; color: var(--ink) !important; letter-spacing: -0.01em; margin: 0 0 1rem;
+}
+.essay-quote cite {
+  font-style: normal; font-family: "Manrope", sans-serif; font-size: .74rem; font-weight: 600;
+  letter-spacing: .24em; text-transform: uppercase; color: var(--gold);
+}
+.essay-verdict {
+  font-family: "Manrope", sans-serif; font-weight: 600; font-size: clamp(1.45rem, 3.4vw, 2rem) !important;
+  line-height: 1.3; letter-spacing: -0.02em; color: var(--gold-bright) !important;
+  margin: 0 0 1.8rem !important; text-wrap: balance;
+}
+.essay-principles { padding-left: 1.4rem; margin: 0 0 1rem; color: #cfcac0; }
+.essay-principles li { margin: 0 0 1.1rem; padding-left: .4rem; }
+.essay-principles li::marker { color: var(--gold); font-family: "Manrope", sans-serif; font-weight: 700; }
+
+.essay-respond {
+  max-width: 680px; margin: 4.5rem auto 0; padding: 2.4rem 2.2rem; text-align: center;
+  border: 1px solid var(--hairline); border-radius: 4px;
+  background: radial-gradient(circle at 50% 0%, rgba(200,162,76,0.10), transparent 70%), var(--obsidian-2);
+}
+.essay-respond p { color: var(--muted); margin: 0 auto 1.6rem; max-width: 46ch; }
+.essay-notes { max-width: 680px; margin: 4.5rem auto 0; padding: 2.4rem 0 clamp(4rem, 9vw, 6rem); border-top: 1px solid var(--hairline); }
+.essay-notes h2 {
+  font-size: .78rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+}
+.essay-notes p, .essay-notes li { color: var(--muted-2); font-size: .88rem; line-height: 1.65; }
+.essay-notes ul { padding-left: 1.1rem; margin: 1rem 0 0; }
+.essay-notes li { margin-bottom: .45rem; }
+.essay-notes a { color: var(--muted); border-bottom: 1px solid var(--hairline); }
+.essay-notes a:hover { color: var(--gold-bright); border-color: var(--gold); }
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 820px) {
   .nav-toggle {
@@ -247,4 +364,10 @@ h1, h2, h3 { font-family: "Manrope", sans-serif; font-weight: 700; letter-spacin
   .showcase-item, .showcase-item.reverse { grid-template-columns: 1fr; direction: ltr; gap: 1.6rem; }
   .about-grid { grid-template-columns: 1fr; }
   .about-figure { max-width: 360px; }
+  .discussion-teaser { grid-template-columns: auto 1fr; gap: 1.1rem 1.2rem; padding: 1.4rem; }
+  .discussion-teaser .link-arrow { grid-column: 1 / -1; }
+  .teaser-rings { width: 48px; height: 48px; }
+  .essay-body { font-size: 1.04rem; }
+  .essay-lede { font-size: 1.14rem; }
+  .essay-quote { padding-left: 1.2rem; }
 }
